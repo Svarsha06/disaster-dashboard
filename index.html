@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chennai Disaster Management</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🚨 Chennai Disaster Management</h1>
+            <p>Floods & Cyclones Monitoring | ESP32 Sensor Network</p>
+        </header>
 
+        <div class="main-content">
+            <!-- Left: Pending Missions -->
+            <div class="panel left-panel">
+                <h2>📋 Pending Missions</h2>
+                <div id="pending-missions"></div>
+            </div>
+
+            <!-- Center: Map -->
+            <div class="panel center-panel">
+                <h2>📍 Chennai Live Map</h2>
+                <div id="map"></div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color red"></div>
+                        <span>Red - Critical (Helicopter)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color orange"></div>
+                        <span>Orange - Medium (Boat)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color yellow"></div>
+                        <span>Yellow - Low (Truck)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Active Missions -->
+            <div class="panel right-panel">
+                <h2>🔄 Active Missions</h2>
+                <div id="active-missions"></div>
+            </div>
+        </div>
+
+        <!-- Footer Stats -->
+        <footer>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Red Points:</span>
+                    <span class="stat-value" id="red-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Orange Points:</span>
+                    <span class="stat-value" id="orange-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Yellow Points:</span>
+                    <span class="stat-value" id="yellow-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Active Missions:</span>
+                    <span class="stat-value" id="active-count">0</span>
+                </div>
+            </div>
+            <div class="update-info">
+                Next update in: <span id="update-timer">5:00</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
