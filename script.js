@@ -327,6 +327,20 @@ function updateDisasterPoints() {
     
     updateUI();
 }
+function sendData() {
+  fetch("http://localhost:5000/data", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: "Hello from GitHub Pages"
+    })
+  })
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+}
 
 // Start mission progress simulation
 function startSimulation() {
