@@ -183,6 +183,26 @@ def init_data():
 def health():
     return jsonify(status="OK", message="Chennai Disaster Management System is running")
 
+@app.route('/data')
+def esp32_bridge():
+    """ESP32 /data endpoint → Your frontend + map"""
+    try:
+        # PROXY YOUR ESP32 DATA (172.16.45.177)
+        import requests
+        esp_response = requests.get('http://172.16.45.177/data', timeout=2)
+        esp_data = esp_response.json()
+        
+        return jsonify({
+            "water": esp_data['water'],
+            "human": esp_data['human']
+        })
+    except:
+        # FALLBACK: Your existing random data
+        return jsonify({
+            "water": random.randint(20, 90),
+            "human": random.choice([0, 1])
+        })
+
 if __name__ == '__main__':
     print("🚀 Starting Chennai Disaster Management System...")
     print("🌐 Server running at http://localhost:5000")
