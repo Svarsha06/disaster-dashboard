@@ -13,6 +13,8 @@ const chennaiLocations = [
 ];
 
 
+
+
 // Disaster points storage
 let disasterPoints = [];
 let pendingMissions = [];
