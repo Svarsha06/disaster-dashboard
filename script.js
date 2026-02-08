@@ -1,348 +1,72 @@
-// Simple Chennai Disaster Management System
-
-// Chennai locations data
-const chennaiLocations = [
-    { name: 'Marina Beach', lat: 13.0545, lng: 80.2833 },
-    { name: 'Central Station', lat: 13.0827, lng: 80.2707 },
-    { name: 'Anna Nagar', lat: 13.0866, lng: 80.2100 },
-    { name: 'T. Nagar', lat: 13.0418, lng: 80.2341 },
-    { name: 'Adyar', lat: 13.0067, lng: 80.2566 },
-    { name: 'Velachery', lat: 12.9792, lng: 80.2210 },
-    { name: 'Koyambedu', lat: 13.0713, lng: 80.2026 },
-    { name: 'Porur', lat: 13.0356, lng: 80.1581 }
+// Chennai disaster locations (50+ points across Chennai)
+const CHENNAI_LOCATIONS = [
+    // North Chennai (15 points)
+    { name: "Tondiarpet", lat: 13.121, lng: 80.256, area: "North", floodRisk: "high" },
+    { name: "Royapuram", lat: 13.111, lng: 80.290, area: "North", floodRisk: "high" },
+    { name: "Washermanpet", lat: 13.114, lng: 80.267, area: "North", floodRisk: "medium" },
+    { name: "Moolakadai", lat: 13.099, lng: 80.247, area: "North", floodRisk: "low" },
+    { name: "Manali", lat: 13.167, lng: 80.256, area: "North", floodRisk: "medium" },
+    { name: "Madhavaram", lat: 13.148, lng: 80.230, area: "North", floodRisk: "low" },
+    { name: "Red Hills", lat: 13.178, lng: 80.181, area: "North", floodRisk: "medium" },
+    { name: "Korukkupet", lat: 13.117, lng: 80.278, area: "North", floodRisk: "high" },
+    { name: "MKB Nagar", lat: 13.107, lng: 80.285, area: "North", floodRisk: "medium" },
+    { name: "Vyasarapadi", lat: 13.124, lng: 80.261, area: "North", floodRisk: "low" },
+    { name: "Thiruvottiyur", lat: 13.158, lng: 80.299, area: "North", floodRisk: "high" },
+    { name: "Athipattu", lat: 13.187, lng: 80.220, area: "North", floodRisk: "medium" },
+    { name: "Kavaraipettai", lat: 13.195, lng: 80.195, area: "North", floodRisk: "low" },
+    { name: "Ponneri", lat: 13.317, lng: 80.194, area: "North", floodRisk: "medium" },
+    { name: "Minjur", lat: 13.279, lng: 80.258, area: "North", floodRisk: "low" },
+    
+    // Central Chennai (15 points)
+    { name: "Egmore", lat: 13.079, lng: 80.262, area: "Central", floodRisk: "medium" },
+    { name: "Nungambakkam", lat: 13.060, lng: 80.240, area: "Central", floodRisk: "low" },
+    { name: "T. Nagar", lat: 13.042, lng: 80.234, area: "Central", floodRisk: "high" },
+    { name: "Mylapore", lat: 13.034, lng: 80.270, area: "Central", floodRisk: "medium" },
+    { name: "Triplicane", lat: 13.057, lng: 80.277, area: "Central", floodRisk: "high" },
+    { name: "Chintadripet", lat: 13.074, lng: 80.268, area: "Central", floodRisk: "medium" },
+    { name: "Chepauk", lat: 13.063, lng: 80.287, area: "Central", floodRisk: "high" },
+    { name: "Kodambakkam", lat: 13.051, lng: 80.220, area: "Central", floodRisk: "low" },
+    { name: "West Mambalam", lat: 13.034, lng: 80.220, area: "Central", floodRisk: "medium" },
+    { name: "Aminjikarai", lat: 13.067, lng: 80.229, area: "Central", floodRisk: "low" },
+    { name: "Kilpauk", lat: 13.081, lng: 80.243, area: "Central", floodRisk: "medium" },
+    { name: "Purasawalkam", lat: 13.090, lng: 80.258, area: "Central", floodRisk: "high" },
+    { name: "Perambur", lat: 13.115, lng: 80.240, area: "Central", floodRisk: "medium" },
+    { name: "Vepery", lat: 13.082, lng: 80.259, area: "Central", floodRisk: "low" },
+    { name: "Park Town", lat: 13.082, lng: 80.274, area: "Central", floodRisk: "medium" },
+    
+    // South Chennai (20 points)
+    { name: "Adyar", lat: 13.007, lng: 80.257, area: "South", floodRisk: "high" },
+    { name: "Besant Nagar", lat: 12.999, lng: 80.267, area: "South", floodRisk: "medium" },
+    { name: "Thiruvanmiyur", lat: 12.985, lng: 80.259, area: "South", floodRisk: "high" },
+    { name: "Indira Nagar", lat: 13.023, lng: 80.248, area: "South", floodRisk: "low" },
+    { name: "Kotturpuram", lat: 13.015, lng: 80.245, area: "South", floodRisk: "medium" },
+    { name: "Guindy", lat: 13.008, lng: 80.220, area: "South", floodRisk: "low" },
+    { name: "Saidapet", lat: 13.021, lng: 80.227, area: "South", floodRisk: "medium" },
+    { name: "Velachery", lat: 12.979, lng: 80.221, area: "South", floodRisk: "high" },
+    { name: "Perungudi", lat: 12.971, lng: 80.240, area: "South", floodRisk: "high" },
+    { name: "Taramani", lat: 12.985, lng: 80.240, area: "South", floodRisk: "medium" },
+    { name: "Medavakkam", lat: 12.918, lng: 80.197, area: "South", floodRisk: "low" },
+    { name: "Mogappair", lat: 13.070, lng: 80.180, area: "South", floodRisk: "medium" },
+    { name: "Nanganallur", lat: 12.984, lng: 80.191, area: "South", floodRisk: "low" },
+    { name: "Pallavaram", lat: 12.968, lng: 80.151, area: "South", floodRisk: "medium" },
+    { name: "Chromepet", lat: 12.952, lng: 80.142, area: "South", floodRisk: "high" },
+    { name: "Tambaram", lat: 12.925, lng: 80.106, area: "South", floodRisk: "low" },
+    { name: "Chengalpattu", lat: 12.699, lng: 79.977, area: "South", floodRisk: "medium" },
+    { name: "Maraimalai Nagar", lat: 12.790, lng: 80.007, area: "South", floodRisk: "low" },
+    { name: "Kelambakkam", lat: 12.799, lng: 80.231, area: "South", floodRisk: "high" },
+    { name: "Kovalam", lat: 12.791, lng: 80.253, area: "South", floodRisk: "medium" }
 ];
 
-// Disaster points storage
-let disasterPoints = [];
-let pendingMissions = [];
-let activeMissions = [];
-let updateTimer = 300; // 5 minutes in seconds
+// Severity colors
+const SEVERITY_COLORS = {
+    'red': '#ef4444',
+    'orange': '#f97316',
+    'yellow': '#eab308'
+};
 
-// Map initialization
-let map;
-let markers = {};
-
-// Initialize the system
-function init() {
-    initMap();
-    generateDisasterPoints();
-    updateUI();
-    startUpdateTimer();
-    startSimulation();
-}
-
-// Initialize Leaflet map
-function initMap() {
-    map = L.map('map').setView([13.0827, 80.2707], 12);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-    
-    // Add Chennai water bodies
-    L.polygon([
-        [13.04, 80.25],
-        [13.06, 80.27],
-        [13.08, 80.29]
-    ], {
-        color: '#1d4ed8',
-        fillColor: '#3b82f6',
-        fillOpacity: 0.2
-    }).addTo(map);
-}
-
-// Generate random disaster points
-function generateDisasterPoints() {
-    disasterPoints = [];
-    
-    chennaiLocations.forEach(location => {
-        if (Math.random() > 0.5) { // 50% chance of disaster
-            const severity = getRandomSeverity();
-            const point = {
-                id: Date.now() + Math.random(),
-                ...location,
-                severity: severity,
-                waterLevel: getWaterLevel(severity),
-                rainfall: getRainfall(severity),
-                timestamp: new Date().toLocaleTimeString()
-            };
-            
-            disasterPoints.push(point);
-            pendingMissions.push(point);
-            addMapMarker(point);
-        }
-    });
-}
-
-function getRandomSeverity() {
-    const rand = Math.random();
-    if (rand < 0.3) return 'red';
-    if (rand < 0.6) return 'orange';
-    return 'yellow';
-}
-
-function getWaterLevel(severity) {
-    switch(severity) {
-        case 'red': return (80 + Math.random() * 20).toFixed(1);
-        case 'orange': return (60 + Math.random() * 20).toFixed(1);
-        case 'yellow': return (40 + Math.random() * 20).toFixed(1);
-    }
-}
-
-function getRainfall(severity) {
-    switch(severity) {
-        case 'red': return (70 + Math.random() * 30).toFixed(1);
-        case 'orange': return (50 + Math.random() * 20).toFixed(1);
-        case 'yellow': return (30 + Math.random() * 20).toFixed(1);
-    }
-}
-
-function getTransport(severity) {
-    switch(severity) {
-        case 'red': return '🚁 Helicopter';
-        case 'orange': return '🚤 Boat';
-        case 'yellow': return '🚚 Truck';
-    }
-}
-
-// Add marker to map
-function addMapMarker(point) {
-    const color = getSeverityColor(point.severity);
-    
-    const marker = L.circleMarker([point.lat, point.lng], {
-        radius: 15,
-        fillColor: color,
-        color: '#ffffff',
-        weight: 2,
-        fillOpacity: 0.8
-    }).addTo(map);
-    
-    // Add popup
-    marker.bindPopup(`
-        <strong>${point.name}</strong><br>
-        Severity: <b style="color:${color}">${point.severity.toUpperCase()}</b><br>
-        Water Level: ${point.waterLevel}%<br>
-        Rainfall: ${point.rainfall}mm
-    `);
-    
-    markers[point.id] = marker;
-}
-
-function getSeverityColor(severity) {
-    switch(severity) {
-        case 'red': return '#ef4444';
-        case 'orange': return '#f97316';
-        case 'yellow': return '#eab308';
-    }
-}
-
-// Update UI
-function updateUI() {
-    updatePendingMissions();
-    updateActiveMissions();
-    updateStats();
-}
-
-// Update pending missions list
-function updatePendingMissions() {
-    const container = document.getElementById('pending-missions');
-    
-    if (pendingMissions.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;text-align:center;">No pending missions</p>';
-        return;
-    }
-    
-    container.innerHTML = pendingMissions.map(mission => `
-        <div class="mission-card ${mission.severity}">
-            <div class="mission-header">
-                <div class="mission-location">${mission.name}</div>
-                <div class="mission-severity severity-${mission.severity}">
-                    ${mission.severity.toUpperCase()}
-                </div>
-            </div>
-            <div class="mission-coords">
-                📍 ${mission.lat.toFixed(4)}, ${mission.lng.toFixed(4)}
-            </div>
-            <div class="mission-actions">
-                <button class="action-btn ngo" onclick="assignMission(${mission.id}, 'NGO')">
-                    NGO
-                </button>
-                <button class="action-btn ndrf" onclick="assignMission(${mission.id}, 'NDRF')">
-                    NDRF
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Update active missions list
-function updateActiveMissions() {
-    const container = document.getElementById('active-missions');
-    
-    if (activeMissions.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;text-align:center;">No active missions</p>';
-        return;
-    }
-    
-    container.innerHTML = activeMissions.map(mission => {
-        const progress = mission.progress || 0;
-        
-        return `
-            <div class="active-mission-card">
-                <div class="active-mission-header">
-                    <div class="mission-location">${mission.location}</div>
-                    <div class="mission-agency">${mission.agency}</div>
-                </div>
-                <div class="mission-transport">
-                    ${getTransport(mission.severity)}
-                </div>
-                <div class="mission-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill ${mission.severity}" style="width: ${progress}%"></div>
-                    </div>
-                </div>
-                <button class="complete-btn" onclick="completeMission('${mission.id}')">
-                    Complete Mission
-                </button>
-            </div>
-        `;
-    }).join('');
-}
-
-// Update statistics
-function updateStats() {
-    const red = disasterPoints.filter(p => p.severity === 'red').length;
-    const orange = disasterPoints.filter(p => p.severity === 'orange').length;
-    const yellow = disasterPoints.filter(p => p.severity === 'yellow').length;
-    
-    document.getElementById('red-count').textContent = red;
-    document.getElementById('orange-count').textContent = orange;
-    document.getElementById('yellow-count').textContent = yellow;
-    document.getElementById('active-count').textContent = activeMissions.length;
-}
-
-// Assign mission to NGO or NDRF
-function assignMission(pointId, agency) {
-    const mission = pendingMissions.find(m => m.id === pointId);
-    
-    if (!mission) return;
-    
-    // Remove from pending
-    pendingMissions = pendingMissions.filter(m => m.id !== pointId);
-    
-    // Add to active
-    const activeMission = {
-        id: Date.now() + Math.random(),
-        location: mission.name,
-        severity: mission.severity,
-        agency: agency,
-        progress: 0,
-        startTime: new Date()
-    };
-    
-    activeMissions.push(activeMission);
-    
-    // Update marker style
-    const marker = markers[pointId];
-    if (marker) {
-        marker.setStyle({
-            fillOpacity: 0.3,
-            color: '#94a3b8'
-        });
-    }
-    
-    updateUI();
-    alert(`✅ Mission assigned to ${agency}`);
-}
-
-// Complete a mission
-function completeMission(missionId) {
-    activeMissions = activeMissions.filter(m => m.id !== missionId);
-    updateUI();
-    alert('✅ Mission completed successfully!');
-}
-
-// Start update timer
-function startUpdateTimer() {
-    setInterval(() => {
-        updateTimer--;
-        
-        const minutes = Math.floor(updateTimer / 60);
-        const seconds = updateTimer % 60;
-        
-        document.getElementById('update-timer').textContent = 
-            `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        
-        // Update every 5 minutes
-        if (updateTimer <= 0) {
-            updateDisasterPoints();
-            updateTimer = 300;
-        }
-    }, 1000);
-}
-
-// Update disaster points (simulate ESP32 data)
-function updateDisasterPoints() {
-    // Update existing points
-    disasterPoints.forEach(point => {
-        if (!activeMissions.find(m => m.location === point.name)) {
-            point.waterLevel = (parseFloat(point.waterLevel) + (Math.random() - 0.5) * 5).toFixed(1);
-            point.rainfall = (parseFloat(point.rainfall) + (Math.random() - 0.5) * 3).toFixed(1);
-            point.timestamp = new Date().toLocaleTimeString();
-            
-            // Update marker if exists
-            const marker = markers[point.id];
-            if (marker) {
-                marker.setPopupContent(`
-                    <strong>${point.name}</strong><br>
-                    Severity: <b style="color:${getSeverityColor(point.severity)}">${point.severity.toUpperCase()}</b><br>
-                    Water Level: ${point.waterLevel}%<br>
-                    Rainfall: ${point.rainfall}mm<br>
-                    Updated: ${point.timestamp}
-                `);
-            }
-        }
-    });
-    
-    // Occasionally add new points
-    if (Math.random() > 0.7) {
-        const location = chennaiLocations[Math.floor(Math.random() * chennaiLocations.length)];
-        
-        if (!disasterPoints.find(p => p.name === location.name)) {
-            const severity = getRandomSeverity();
-            const point = {
-                id: Date.now() + Math.random(),
-                ...location,
-                severity: severity,
-                waterLevel: getWaterLevel(severity),
-                rainfall: getRainfall(severity),
-                timestamp: new Date().toLocaleTimeString()
-            };
-            
-            disasterPoints.push(point);
-            pendingMissions.push(point);
-            addMapMarker(point);
-        }
-    }
-    
-    updateUI();
-}
-
-// Start mission progress simulation
-function startSimulation() {
-    setInterval(() => {
-        activeMissions.forEach(mission => {
-            if (mission.progress < 100) {
-                mission.progress = Math.min(100, mission.progress + Math.random() * 5);
-            }
-        });
-        updateActiveMissions();
-    }, 2000);
-}
-
-// Initialize on page load
-window.onload = init;
-
-// Make functions available globally
-window.assignMission = assignMission;
-window.completeMission = completeMission;
+// Transport types
+const TRANSPORT_TYPES = {
+    'red': '🚁 Helicopter',
+    'orange': '🚤 Boat',
+    'yellow': '🚚 Truck'
+};
