@@ -12,6 +12,7 @@ const chennaiLocations = [
     { name: 'Porur', lat: 13.0356, lng: 80.1581 }
 ];
 
+
 // Disaster points storage
 let disasterPoints = [];
 let pendingMissions = [];
