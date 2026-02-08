@@ -1,3 +1,5 @@
+
+
 // Chennai Disaster Management System
 
 // Chennai locations data
@@ -11,6 +13,9 @@ const chennaiLocations = [
     { name: 'Koyambedu', lat: 13.0713, lng: 80.2026 },
     { name: 'Porur', lat: 13.0356, lng: 80.1581 }
 ];
+
+
+
 
 // Disaster points storage
 let disasterPoints = [];
@@ -28,41 +33,7 @@ function init() {
     generateDisasterPoints();
     updateUI();
     startUpdateTimer();
-    setInterval(async () => {
-    try {
-        const response = await fetch('/data');  // Flask proxy → ESP32
-        const espData = await response.json();
-        
-        // Apply ESP32 water level to ALL Chennai locations
-        chennaiLocations.forEach(location => {
-            const severity = espData.water < 25 ? 'red' : 
-                           espData.water < 50 ? 'orange' : 'yellow';
-            
-            // Update disaster point with LIVE ESP32 data
-            const point = disasterPoints.find(p => p.name === location.name) || {
-                id: Date.now() + Math.random(),
-                name: location.name,
-                lat: location.lat, 
-                lng: location.lng,
-                severity: severity
-            };
-            
-            point.severity = severity;
-            point.waterLevel = espData.water.toFixed(1) + 'cm';
-            point.rainfall = espData.human ? 85 : 45;
-            
-            if (!disasterPoints.find(p => p.id === point.id)) {
-                disasterPoints.push(point);
-                pendingMissions.push(point);
-                addMapMarker(point);
-            }
-        });
-        
-        updateUI();
-    } catch(e) {
-        console.log('ESP32 integration offline');
-    }
-}, 3000);  // Update every 3 seconds
+    startESP32Integration();
 }
 
 // Initialize Leaflet map
@@ -410,24 +381,30 @@ function updateDisasterPoints() {
 }
 
 // Start mission progress simulation
-function startSimulation() {
-    setInterval(() => {
-        // Check each mission
-        activeMissions.forEach(mission => {
-            if (mission.progress < 100) {
-                mission.progress = Math.min(100, mission.progress + Math.random() * 5);
+async function startESP32Integration() {
+    setInterval(async () => {
+        try {
+            const response = await fetch('/data');  // Your Flask endpoint
+            const espData = await response.json();
+            
+            // Apply ESP32 water level to your existing disaster points
+            chennaiLocations.forEach(location => {
+                const severity = espData.water < 25 ? 'red' : 
+                               espData.water < 50 ? 'orange' : 'yellow';
                 
-                // Check if progress reached 100%
-                if (mission.progress >= 100 && !mission.markedForRemoval) {
-                    // Auto-complete mission after 2 seconds
-                    setTimeout(() => {
-                        completeMission(mission.id);
-                    }, 2000);
+                // Update your existing points with LIVE ESP32 data
+                const pointIndex = disasterPoints.findIndex(p => p.name === location.name);
+                if(pointIndex > -1) {
+                    disasterPoints[pointIndex].severity = severity;
+                    disasterPoints[pointIndex].waterLevel = espData.water.toFixed(1);
                 }
-            }
-        });
-        updateActiveMissions();
-    }, 2000);
+            });
+            
+            updateUI();  // Your existing function
+        } catch(e) {
+            console.log('ESP32 offline - using simulation');
+        }
+    }, 3000);
 }
 
 // Initialize on page load
