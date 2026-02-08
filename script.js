@@ -1,4 +1,4 @@
-// Simple Chennai Disaster Management System
+// Chennai Disaster Management System
 
 // Chennai locations data
 const chennaiLocations = [
@@ -179,13 +179,17 @@ function updatePendingMissions() {
 function updateActiveMissions() {
     const container = document.getElementById('active-missions');
     
-    if (activeMissions.length === 0) {
+    // Filter out missions that are marked for removal
+    const activeFiltered = activeMissions.filter(m => !m.markedForRemoval);
+    
+    if (activeFiltered.length === 0) {
         container.innerHTML = '<p style="color:#94a3b8;text-align:center;">No active missions</p>';
         return;
     }
     
-    container.innerHTML = activeMissions.map(mission => {
+    container.innerHTML = activeFiltered.map(mission => {
         const progress = mission.progress || 0;
+        const isCompleted = progress >= 100;
         
         return `
             <div class="active-mission-card">
@@ -197,12 +201,14 @@ function updateActiveMissions() {
                     ${getTransport(mission.severity)}
                 </div>
                 <div class="mission-progress">
+                    <div class="progress-label">Rescue Progress: ${Math.round(progress)}%</div>
                     <div class="progress-bar">
                         <div class="progress-fill ${mission.severity}" style="width: ${progress}%"></div>
                     </div>
                 </div>
-                <button class="complete-btn" onclick="completeMission('${mission.id}')">
-                    Complete Mission
+                ${isCompleted ? '<div class="mission-completed">✅ Mission Completed!</div>' : ''}
+                <button class="complete-btn" onclick="completeMission('${mission.id}')" ${isCompleted ? 'disabled' : ''}>
+                    ${isCompleted ? 'Mission Complete' : 'Complete Mission'}
                 </button>
             </div>
         `;
@@ -215,10 +221,13 @@ function updateStats() {
     const orange = disasterPoints.filter(p => p.severity === 'orange').length;
     const yellow = disasterPoints.filter(p => p.severity === 'yellow').length;
     
+    // Count only missions not marked for removal and not completed
+    const activeCount = activeMissions.filter(m => !m.markedForRemoval && m.progress < 100).length;
+    
     document.getElementById('red-count').textContent = red;
     document.getElementById('orange-count').textContent = orange;
     document.getElementById('yellow-count').textContent = yellow;
-    document.getElementById('active-count').textContent = activeMissions.length;
+    document.getElementById('active-count').textContent = activeCount;
 }
 
 // Assign mission to NGO or NDRF
@@ -237,7 +246,8 @@ function assignMission(pointId, agency) {
         severity: mission.severity,
         agency: agency,
         progress: 0,
-        startTime: new Date()
+        startTime: new Date(),
+        markedForRemoval: false
     };
     
     activeMissions.push(activeMission);
@@ -252,14 +262,51 @@ function assignMission(pointId, agency) {
     }
     
     updateUI();
-    alert(`✅ Mission assigned to ${agency}`);
+    showNotification(`✅ Mission assigned to ${agency}`);
 }
 
 // Complete a mission
 function completeMission(missionId) {
-    activeMissions = activeMissions.filter(m => m.id !== missionId);
-    updateUI();
-    alert('✅ Mission completed successfully!');
+    // Find the mission
+    const missionIndex = activeMissions.findIndex(m => m.id === missionId);
+    
+    if (missionIndex !== -1) {
+        // Mark for removal
+        activeMissions[missionIndex].markedForRemoval = true;
+        
+        // Get mission details for notification
+        const mission = activeMissions[missionIndex];
+        
+        // Remove from active missions after 1 second
+        setTimeout(() => {
+            activeMissions.splice(missionIndex, 1);
+            updateUI();
+            showNotification(`✅ Mission completed at ${mission.location}!`);
+        }, 1000);
+    }
+}
+
+// Show temporary notification
+function showNotification(message) {
+    // Remove existing notifications
+    document.querySelectorAll('.notification').forEach(n => n.remove());
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
 }
 
 // Start update timer
@@ -331,9 +378,18 @@ function updateDisasterPoints() {
 // Start mission progress simulation
 function startSimulation() {
     setInterval(() => {
+        // Check each mission
         activeMissions.forEach(mission => {
             if (mission.progress < 100) {
                 mission.progress = Math.min(100, mission.progress + Math.random() * 5);
+                
+                // Check if progress reached 100%
+                if (mission.progress >= 100 && !mission.markedForRemoval) {
+                    // Auto-complete mission after 2 seconds
+                    setTimeout(() => {
+                        completeMission(mission.id);
+                    }, 2000);
+                }
             }
         });
         updateActiveMissions();
