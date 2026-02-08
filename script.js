@@ -14,9 +14,6 @@ const chennaiLocations = [
     { name: 'Porur', lat: 13.0356, lng: 80.1581 }
 ];
 
-
-
-
 // Disaster points storage
 let disasterPoints = [];
 let pendingMissions = [];
@@ -33,7 +30,7 @@ function init() {
     generateDisasterPoints();
     updateUI();
     startUpdateTimer();
-    startESP32Integration();
+    startSimulation();
 }
 
 // Initialize Leaflet map
@@ -381,30 +378,24 @@ function updateDisasterPoints() {
 }
 
 // Start mission progress simulation
-async function startESP32Integration() {
-    setInterval(async () => {
-        try {
-            const response = await fetch('/data');  // Your Flask endpoint
-            const espData = await response.json();
-            
-            // Apply ESP32 water level to your existing disaster points
-            chennaiLocations.forEach(location => {
-                const severity = espData.water < 25 ? 'red' : 
-                               espData.water < 50 ? 'orange' : 'yellow';
+function startSimulation() {
+    setInterval(() => {
+        // Check each mission
+        activeMissions.forEach(mission => {
+            if (mission.progress < 100) {
+                mission.progress = Math.min(100, mission.progress + Math.random() * 5);
                 
-                // Update your existing points with LIVE ESP32 data
-                const pointIndex = disasterPoints.findIndex(p => p.name === location.name);
-                if(pointIndex > -1) {
-                    disasterPoints[pointIndex].severity = severity;
-                    disasterPoints[pointIndex].waterLevel = espData.water.toFixed(1);
+                // Check if progress reached 100%
+                if (mission.progress >= 100 && !mission.markedForRemoval) {
+                    // Auto-complete mission after 2 seconds
+                    setTimeout(() => {
+                        completeMission(mission.id);
+                    }, 2000);
                 }
-            });
-            
-            updateUI();  // Your existing function
-        } catch(e) {
-            console.log('ESP32 offline - using simulation');
-        }
-    }, 3000);
+            }
+        });
+        updateActiveMissions();
+    }, 2000);
 }
 
 // Initialize on page load
