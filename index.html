@@ -4,80 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chennai Disaster Management</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
-        <header>
-            <h1>🚨 Chennai Disaster Management</h1>
-            <p>Floods & Cyclones Monitoring | ESP32 Sensor Network</p>
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h1>Chennai Disaster Management</h1>
+            </div>
+            <div class="live-info">
+                <span class="live-badge"><i class="fas fa-circle"></i> LIVE</span>
+                <span id="datetime"></span>
+                <div class="weather">
+                    <i class="fas fa-cloud-rain"></i>
+                    <span id="weather-status">Cyclone Alert</span>
+                </div>
+            </div>
         </header>
 
         <div class="main-content">
             <!-- Left: Pending Missions -->
             <div class="panel left-panel">
-                <h2>📋 Pending Missions</h2>
-                <div id="pending-missions"></div>
+                <h2><i class="fas fa-tasks"></i> PENDING MISSIONS</h2>
+                <div class="mission-list" id="pending-missions">
+                    <!-- Missions will load here -->
+                </div>
             </div>
 
-            <!-- Center: Map -->
-            <div class="panel center-panel">
-                <h2>📍 Chennai Live Map</h2>
+            <!-- Center: Chennai Map -->
+            <div class="panel map-panel">
+                <h2><i class="fas fa-map-marked-alt"></i> CHENNAI LIVE MAP</h2>
                 <div id="map"></div>
                 <div class="map-legend">
                     <div class="legend-item">
                         <div class="legend-color red"></div>
-                        <span>Red - Critical (Helicopter)</span>
+                        <span>RED - Critical (Helicopter)</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color orange"></div>
-                        <span>Orange - Medium (Boat)</span>
+                        <span>ORANGE - Medium (Boat)</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color yellow"></div>
-                        <span>Yellow - Low (Truck)</span>
+                        <span>YELLOW - Low (Truck)</span>
                     </div>
+                </div>
+                <div class="update-info">
+                    Next update: <span id="next-update">5:00</span>
                 </div>
             </div>
 
             <!-- Right: Active Missions -->
             <div class="panel right-panel">
-                <h2>🔄 Active Missions</h2>
-                <div id="active-missions"></div>
+                <h2><i class="fas fa-spinner"></i> ACTIVE MISSIONS</h2>
+                <div class="mission-list" id="active-missions">
+                    <!-- Active missions will load here -->
+                </div>
             </div>
         </div>
 
         <!-- Footer Stats -->
-        <footer>
+        <footer class="footer">
             <div class="stats">
                 <div class="stat">
-                    <span class="stat-label">Red Points:</span>
+                    <span class="stat-label">RED</span>
                     <span class="stat-value" id="red-count">0</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Orange Points:</span>
+                    <span class="stat-label">ORANGE</span>
                     <span class="stat-value" id="orange-count">0</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Yellow Points:</span>
+                    <span class="stat-label">YELLOW</span>
                     <span class="stat-value" id="yellow-count">0</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Active Missions:</span>
+                    <span class="stat-label">ACTIVE</span>
                     <span class="stat-value" id="active-count">0</span>
                 </div>
-            </div>
-            <div class="update-info">
-                Next update in: <span id="update-timer">5:00</span>
+                <div class="stat">
+                    <span class="stat-label">COMPLETED</span>
+                    <span class="stat-value" id="completed-count">0</span>
+                </div>
             </div>
         </footer>
     </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
